@@ -12,17 +12,22 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
-public class PapaCalienteCommand implements CommandExecutor {
+public class PapaCalienteCommand implements CommandExecutor, TabCompleter {
 
     GameManager gm = PapaCaliente.getPlugin().getGameManager();
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] args) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage("§6No puedes ejecutar este comando desde la consola.");
+            commandSender.sendMessage(Component.text("No puedes ejecutar este comando desde la consola.").color(NamedTextColor.GOLD));
             return true;
         }
 
@@ -94,11 +99,12 @@ public class PapaCalienteCommand implements CommandExecutor {
             if (args.length < 2) {
                 commandSender.sendMessage(Component.text( "Debes especificar un nombre de usuario").color(NamedTextColor.RED));
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
+                return true;
             }
 
             Player jugador = Bukkit.getPlayerExact(args[1]);
             if (jugador == null) {
-                commandSender.sendMessage("No se ha encontrado al jugador");
+                commandSender.sendMessage(Component.text("No se ha encontrado al jugador").color(NamedTextColor.RED));
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
                 return true;
             }
@@ -120,5 +126,32 @@ public class PapaCalienteCommand implements CommandExecutor {
             return true;
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NotNull [] args) {
+        if (!sender.hasPermission("papacaliente.admin")) return List.of();
+
+        if (args.length == 1) {
+            List<String> completions = new ArrayList<>(List.of("start", "stop", "add", "remove", "gui"));
+            completions.removeIf(s -> !s.toLowerCase().startsWith(args[0].toLowerCase()));
+            return completions;
+        }
+
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("gui")) {
+                List<String> completions = new ArrayList<>(List.of("usuario", "mod", "admin"));
+                completions.removeIf(s -> !s.toLowerCase().startsWith(args[1].toLowerCase()));
+                return completions;
+            }
+            if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove")) {
+                return Bukkit.getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+        }
+
+        return List.of();
     }
 }
