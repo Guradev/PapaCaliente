@@ -1,5 +1,6 @@
 package net.gura.papaCaliente.utils;
 
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,12 +23,12 @@ public class Debugger {
 
     public static void sendDebug(Player player, String message) {
         if(debug) {
-            player.sendMessage(NamedTextColor.YELLOW + "[EVENTO DEBUG] " + message);
+            player.sendMessage(Component.text("[EVENTO DEBUG] " + message).color(NamedTextColor.YELLOW));
         }
     }
     public void log(String message) {
         if(debug) {
-            plugin.getLogger().info(NamedTextColor.YELLOW + "[PAPA CALIENTE DEBUG] " + message);
+            plugin.getLogger().info("[PAPA CALIENTE DEBUG] " + message);
         }
     }
 }
