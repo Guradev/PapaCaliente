@@ -4,7 +4,6 @@ import net.gura.papaCaliente.PapaCaliente;
 import net.gura.papaCaliente.game.GameManager;
 import net.gura.papaCaliente.gui.AdminGUI;
 import net.gura.papaCaliente.gui.PlayerManagerGUI;
-import net.gura.papaCaliente.logics.Countdown;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -19,8 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import static net.gura.papaCaliente.PapaCaliente.plugin;
 
 public class AdminGUIListener implements Listener {
-
-    private Countdown countdown;
 
     @EventHandler
     public void ClickItem(InventoryClickEvent event) {
@@ -54,7 +51,7 @@ public class AdminGUIListener implements Listener {
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
                     return;
                 }
-                countdown.reset(); // Resets the countdown but doesnt stop the game
+                gm.getCountdown().reset(); // Resets the countdown but doesnt stop the game
                 player.sendMessage(Component.text("Contador reseteado correctamente").color(NamedTextColor.GRAY));
             }
             case TNT -> {

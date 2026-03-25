@@ -1,5 +1,7 @@
 package net.gura.papaCaliente.game;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.gura.papaCaliente.logics.Countdown;
 import net.gura.papaCaliente.ui.BossBarHandler;
 import net.gura.papaCaliente.utils.CustomItems;
@@ -19,17 +21,17 @@ import java.util.*;
 import static net.gura.papaCaliente.PapaCaliente.plugin;
 
 public class GameManager {
+    @Getter
     private Countdown countdown;
+    @Getter
     private GameState gameState = GameState.ESPERANDO;
     private final Set<Player> players = new HashSet<>();
+    @Setter
+    @Getter
     private Player currentHolder = null;
     BossBarHandler bossbar = new BossBarHandler("Papa Caliente...", 1f, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS);
 
     private final boolean isTesting = false; // For testing purposes only (disable in production)
-
-    public GameState getGameState() {
-        return gameState;
-    }
 
     public boolean isRunning() {
         return gameState == GameState.CORRIENDO;
@@ -73,7 +75,7 @@ public class GameManager {
 
         //Elige a una persona random de la lista para darle la papa caliente
         Collections.shuffle(listaPlayers);
-        currentHolder = listaPlayers.get(0);
+        currentHolder = listaPlayers.getFirst();
 
         givePotato(currentHolder);
         currentHolder.setGlowing(true);
@@ -122,7 +124,7 @@ public class GameManager {
             countdown.cancel();
             countdown = null;
         }
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        for (Player player : new ArrayList<>(Bukkit.getOnlinePlayers())) {
             player.setGlowing(false);
             ItemStack[] contents = player.getInventory().getContents();
             for (int i = 0; i < contents.length; i++) {
@@ -180,18 +182,11 @@ public class GameManager {
 
         players.clear();
         currentHolder = null;
+        gameState = GameState.ESPERANDO;
     }
 
     public Set<Player> getPlayers() {
         return Collections.unmodifiableSet(players);
-    }
-
-    public Player getCurrentHolder() {
-        return currentHolder;
-    }
-
-    public void setCurrentHolder(Player player) {
-        currentHolder = player;
     }
 
     public void passPotato(Player de, Player a) {
