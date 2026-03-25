@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,7 +93,7 @@ public class PlayerManagerGUIListener implements Listener {
                     admin.playSound(admin.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
                     return;
                 }
-                gm.getPlayers().forEach(gm::removePlayer);
+                new ArrayList<>(gm.getPlayers()).forEach(gm::removePlayer);
                 admin.sendMessage(Component.text("Todos los jugadores fueron eliminados del evento").color(NamedTextColor.GREEN));
                 admin.playSound(admin.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10F, 1F);
                 PlayerManagerGUI.openGUI(admin, currentPage);
@@ -111,11 +112,11 @@ public class PlayerManagerGUIListener implements Listener {
 
                 if (event.getClick() == ClickType.LEFT) {
                     admin.teleport(targetPlayer);
-                    admin.sendMessage(Component.text("Teletransportando a §f" + targetPlayer.getName()));
+                    admin.sendMessage(Component.text("Teletransportando a ").color(NamedTextColor.GRAY).append(Component.text(targetPlayer.getName(), NamedTextColor.WHITE)));
                     admin.playSound(admin.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1F, 1F);
                 } else if (event.getClick() == ClickType.RIGHT) {
                     gm.removePlayer(targetPlayer);
-                    admin.sendMessage("§c" + targetPlayer.getName() + " fue eliminado del evento");
+                    admin.sendMessage(Component.text(targetPlayer.getName() + " fue eliminado del evento").color(NamedTextColor.RED));
                     targetPlayer.sendMessage(Component.text("Has sido eliminado del evento").color(NamedTextColor.RED));
                     PlayerManagerGUI.openGUI(admin, currentPage);
                 }
